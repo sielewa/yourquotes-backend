@@ -1,0 +1,26 @@
+{
+  "name": "cytatys",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "devStart": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sielewa/cytatys.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sielewa/cytatys/issues"
+  },
+  "homepage": "https://github.com/sielewa/cytatys#readme",
+  "dependencies": {
+    "ejs": "^3.1.6"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.0",
+    "nodemon": "^2.0.15"
+  }
+}
