@@ -1,7 +1,6 @@
 {
   "name": "cytatys",
   "version": "1.0.0",
-  "description": "",
   "main": "app.js",
   "scripts": {
     "devStart": "nodemon app.js"
@@ -17,11 +16,16 @@
   },
   "homepage": "https://github.com/sielewa/cytatys#readme",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "ejs": "^3.1.6",
+    "jsonwebtoken": "^8.5.1",
+    "knex": "^1.0.3",
+    "mysql": "^2.18.1",
     "mysql2": "^2.3.3"
   },
   "devDependencies": {
     "dotenv": "^16.0.0",
     "nodemon": "^2.0.15"
-  }
+  },
+  "description": ""
 }

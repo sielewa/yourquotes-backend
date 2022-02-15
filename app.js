@@ -1,13 +1,16 @@
 require("dotenv").config();
+const User = require('./models/User');
 
 const express = require('express');
 const cors = require('cors');
+const { redirect } = require("express/lib/response");
 
 const app = express();
-const port = 3000;
 
 app.use(cors());
 app.use(express.json());
+
+app.use("/register", require("./routes/register"));
 
 app.use((err, req, res, next) => {
     console.log(err.stack);
@@ -23,6 +26,6 @@ app.get('/', (req, res) => {
     res.send('hello world');
 })
 
-app.listen(port, () => {
-    console.log("app start");
+app.listen(process.env.PORT, () => {
+    console.log(`app start on PORT ${process.env.PORT}`);
 })
