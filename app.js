@@ -1,9 +1,7 @@
 require("dotenv").config();
-const User = require('./models/User');
 
 const express = require('express');
 const cors = require('cors');
-const { redirect } = require("express/lib/response");
 
 const app = express();
 
@@ -11,6 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/register", require("./routes/register"));
+app.use("/login", require("./routes/login"));
 
 app.use((err, req, res, next) => {
     console.log(err.stack);

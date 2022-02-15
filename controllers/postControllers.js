@@ -1,13 +1,8 @@
+require('dotenv').config();
+
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
-
-exports.LoginAuth = (req, res, next) => {
-    res.send("Login in");
-};
-
-exports.getUserByUsername = (req, res, next) => {
-    res.send("Get user by username");
-};
+const jwt = require('jsonwebtoken');
 
 exports.Register = async (req, res, next) => {
     try {
@@ -32,4 +27,27 @@ exports.Register = async (req, res, next) => {
             message: "Something went really wrong",
         });
     }
+};
+
+exports.loginAuth = async (req, res, next) => {
+    const { username, password } = req.body;
+    const user = await User.getByUsername(username);
+    if (user != null){
+        const jsonSalt = await User.getSalt(username);
+        const salt = jsonSalt['salt'];
+        hashedPassword = await bcrypt.hash(password, salt);
+        jsonPassword = await User.getPassword(username);
+        if ( hashedPassword === jsonPassword['password']){
+            const accessToken = jwt.sign(username, process.env.ACCESS_TOKEN_SECRET);
+            res.json({accessToken: accessToken});
+        }else{
+            res.send("Wrong password");
+        }
+    }else{
+        res.send("User doesnt exists");
+    }
+};
+
+exports.getUserByUsername = (req, res, next) => {
+    res.send("Get user by username");
 };

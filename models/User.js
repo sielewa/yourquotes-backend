@@ -20,11 +20,17 @@ class User {
 
     static async getByUsername(username){
         const results = await db.select().from('users').where('username', username);
-        return results[0];
+        return results[0] || null;
     }
 
-    static checkPassword(){
+    static async getSalt(username){
+        const results = await db.select('salt').from('users').where('username', username);
+        return results[0] || null;
+    }
 
+    static async getPassword(username){
+        const results = await db.select('password').from('users').where('username', username);
+        return results[0] || null;
     }
 }
 
