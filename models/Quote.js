@@ -30,7 +30,7 @@ class Quote {
     static async getAll(){
         const quos = await db('quotations').select()
         return quos[0] || null
-}
+    }
 
 }
 

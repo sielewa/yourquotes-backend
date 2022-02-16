@@ -13,7 +13,7 @@ class User {
         return newUser;
     }
 
-    async isExist(username, email){
+    static async isExist(username, email){
         const results = await db.select().from('users').where('username', username).orWhere('email', email);
         return results.length > 0;
     }
