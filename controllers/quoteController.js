@@ -12,7 +12,6 @@ exports.addQuote = async (req, res, next) => {
     try{
         const { userid, quoteText } = req.body
         const date = new Date().toISOString().slice(0, 19).replace('T', ' ')
-        console.log(quoteText)
         let quote = new Quote(quoteText, userid, date)
         quote = await quote.saveToDatabase()
         res.send('The Quote has been added')

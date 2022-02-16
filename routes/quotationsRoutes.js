@@ -1,9 +1,9 @@
 const express = require('express');
 const controller = require('../controllers/quoteController');
-const usercontroller = require('../controllers/userController')
+const auth = require('../authToken/authToken')
 const router = express.Router();
 
 router.get('/', controller.getAllQuotations)
-router.post('/add',  usercontroller.authenticateToken, controller.addQuote)
+router.post('/add',  auth, controller.addQuote)
 
 module.exports = router;
