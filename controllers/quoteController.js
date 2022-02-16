@@ -13,11 +13,16 @@ exports.addQuote = async (req, res, next) => {
         const { userid, quoteText } = req.body
         const date = new Date().toISOString().slice(0, 19).replace('T', ' ')
         let quote = new Quote(quoteText, userid, date)
-        quote = await quote.saveToDatabase()
-        res.send('The Quote has been added')
+        try{
+            quote = await quote.saveToDatabase()
+            res.json({success:true,message:'The Quote has been added'})
+        } catch(err){
+            return({success:false, message:err})
+        }
     } catch(e) {
         console.log(e);
         res.status(500).json({
+            success:false,
             message: "Something went really wrong",
         })
     }

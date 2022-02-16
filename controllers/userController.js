@@ -10,17 +10,18 @@ exports.register = async (req, res, next) => {
 
         const isExists = await User.isExist(username, email);
         if (isExists){
-            res.send("User already exists")
+            res.json({success:false, message:"User is already exists"})
         }else{
             const salt = await bcrypt.genSalt();
             const hashedPassword = await bcrypt.hash(password, salt);
             let user = new User(username, salt, hashedPassword, email);
             user = await user.saveToDatabase();
-            res.send("Create new user");
+            res.json({success:true, message:"User has been created"})
         }
     } catch(e) {
         console.log(e);
         res.status(500).json({
+            success:false,
             message: "Something went really wrong",
         });
     }
@@ -37,17 +38,22 @@ exports.signIn = async (req, res, next) => {
             jsonPassword = await User.getPassword(username);
             if (hashedPassword === jsonPassword['password']){
                 const accessToken = jwt.sign(username, process.env.ACCESS_TOKEN_SECRET);
-                res.json({accessToken: accessToken});
+                res.json({success:true, accessToken: accessToken});
             }else{
-                res.send("Wrong password");
+                res.json({success:false, message:"Wrong password"})
             }
         }else{
-            res.send("User doesnt exists");
+            res.json({success:false, message:"User doesnt exists"});
         }
     } catch(e){
         console.log(e);
         res.status(500).json({
+            success:false,
             message: "Something went really wrong",
         });
     }
 };
+
+exports.auth = (req, res, next) => {
+    return res.status(200).json({success:true})
+}
