@@ -13,9 +13,14 @@ class User {
         return newUser;
     }
 
-    static async isExist(username, email){
+    async isExist(username, email){
         const results = await db.select().from('users').where('username', username).orWhere('email', email);
         return results.length > 0;
+    }
+
+    static async getIdByUsername(username){
+        const results = await db.select("id").from('users').where('username', username);
+        return results[0] || null;
     }
 
     static async getByUsername(username){

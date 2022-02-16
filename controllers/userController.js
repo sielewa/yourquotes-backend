@@ -10,13 +10,17 @@ exports.register = async (req, res, next) => {
 
         const isExists = await User.isExist(username, email);
         if (isExists){
-            res.json({success:false, message:"User is already exists"})
+            res.json({success:false, message:"User with this usernamer or email already exists"})
         }else{
             const salt = await bcrypt.genSalt();
             const hashedPassword = await bcrypt.hash(password, salt);
             let user = new User(username, salt, hashedPassword, email);
-            user = await user.saveToDatabase();
-            res.json({success:true, message:"User has been created"})
+            try{
+                user = await user.saveToDatabase();
+                res.json({success:true, message:"User has been created"})
+            } catch(err){
+                res.json({success:false, message: err})
+            }
         }
     } catch(e) {
         console.log(e);
@@ -32,11 +36,9 @@ exports.signIn = async (req, res, next) => {
         const { username, password } = req.body;
         const user = await User.getByUsername(username);
         if (user != null){
-            const jsonSalt = await User.getSalt(username);
-            const salt = jsonSalt['salt'];
-            hashedPassword = await bcrypt.hash(password, salt);
-            jsonPassword = await User.getPassword(username);
-            if (hashedPassword === jsonPassword['password']){
+            const salt = user['salt'];
+            let hashedPassword = await bcrypt.hash(password, salt);
+            if (hashedPassword === user['password']){
                 const accessToken = jwt.sign(username, process.env.ACCESS_TOKEN_SECRET);
                 res.json({success:true, accessToken: accessToken});
             }else{

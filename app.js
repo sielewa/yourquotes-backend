@@ -17,14 +17,11 @@ app.use((err, req, res, next) => {
     console.log(err.code);
 
     res.status(500).json({
+        success:false,
         message: "Something went really wrong",
     });
 })
 
-app.get('/', (req, res) => {
-    res.send('hello world');
-})
-
 app.listen(process.env.PORT, () => {
-    console.log(`app start on PORT ${process.env.PORT}`);
+    console.log(`quotations-app start on PORT: ${process.env.PORT}`);
 })
