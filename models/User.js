@@ -9,8 +9,8 @@ class User {
     }
 
     async saveToDatabase(){
-        const newUser = await db('users').insert({'username': this.username, 'salt': this.salt, 'password': this.password, 'email': this.email})
-        return newUser
+        const result = await db('users').insert({'username': this.username, 'salt': this.salt, 'password': this.password, 'email': this.email})
+        return result
     }
 
     static async isExist(username, email){
@@ -18,24 +18,17 @@ class User {
         return results.length > 0
     }
 
-    static async getIdByUsername(username){
-        const results = await db.select("id").from('users').where('username', username)
-        return results[0] || null
-    }
-
     static async getByUsername(username){
-        const results = await db.select().from('users').where('username', username)
+        const results = await db.select().from('users').where('username', username).limit(1)
         return results[0] || null
     }
 
-    static async getSalt(username){
-        const results = await db.select('salt').from('users').where('username', username)
-        return results[0] || null
+    static getSalt(username){
+        return this.salt
     }
 
-    static async getPassword(username){
-        const results = await db.select('password').from('users').where('username', username)
-        return results[0] || null
+    static getPassword(username){
+        return this.password
     }
 }
 

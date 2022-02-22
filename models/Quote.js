@@ -1,35 +1,37 @@
 const db = require('../config/db')
 
 class Quote {
-    constructor(quotation, userid, date){
+    constructor(quotation, user_id){
         this.quotation = quotation
-        this.userid = userid
-        this.date = date
+        this.user_id = user_id
     }
 
     async saveToDatabase(){
-        const newquo = await db('quotations').insert({'text': this.quotation, 'user_id':this.userid})
-        return newquo
+        const result = await db('quotations').insert({'text': this.quotation, 'user_id':this.user_id})
+        return result
     }
 
-    static async findByDateDesc(){
-        const results = await db('quotations').select().orderBy('date', 'desc')
+    static async getByPagination(offset, limit){
+        const results = await db('quotations').select().orderBy('created_at', 'desc').offset(offset).limit(limit)
         return results || null
     }
 
     static async getById(quoid){
-        const quo = await db('quotations').select().where('id', quoid)
+        const quo = await db('quotations').select().where('id', quoid).limit(1)
         return quo[0] || null
     }
 
     static async getByUserId(userid){
-        const quos = await db('quotations').select().where('userid', userid)
+        const quos = await db('quotations').select().where('userid', userid).limit(1)
         return quos[0] || null
     }
 
-    static async getAll(){
-        const quos = await db('quotations').select()
-        return quos[0] || null
+    static getUserId(){
+        return this.user_id
+    }
+
+    static getText(){
+        return this.quotation
     }
 
 }
