@@ -26,35 +26,6 @@ exports.register = async (req, res, next) => {
         res.status(500).json({
             success: false,
             message: 'Something went really wrong',
-        });
+        })
     }
-};
-
-exports.signIn = async (req, res, next) => {
-    try {
-        const { username, password } = req.body
-        const user = await User.getByUsername(username)
-        if (user != null){
-            const salt = user['salt']
-            let hashedPassword = await bcrypt.hash(password, salt)
-            if (hashedPassword === user['password']){
-                const accessToken = jwt.sign(username, config.access_token_secret)
-                res.json({success: true, accessToken: accessToken})
-            }else{
-                res.json({success: false, message: 'Wrong password'})
-            }
-        }else{
-            res.json({success: false, message: 'User doesnt exists'});
-        }
-    } catch(e){
-        console.log(e)
-        res.status(500).json({
-            success: false,
-            message: 'Something went really wrong',
-        });
-    }
-};
-
-exports.auth = (req, res, next) => {
-    return res.status(200).json({success: true})
 }

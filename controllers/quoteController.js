@@ -24,10 +24,9 @@ exports.getByPagination = async (req, res, next) => {
 
 exports.addQuote = async (req, res, next) => {
     try{
-        const { quoteText } = req.body
-        const date = new Date().toISOString().slice(0, 19).replace('T', ' ')
+        const { text } = req.body
         let user = await User.getByUsername(req.user)
-        let quote = new Quote(quoteText, user['id'], date)
+        let quote = new Quote(text, user['id'])
         try{
             quote = await quote.saveToDatabase()
             res.json({success: true, message: 'The Quote has been added'})

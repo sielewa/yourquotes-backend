@@ -8,7 +8,7 @@ class Quote {
     }
 
     async saveToDatabase(){
-        const newquo = await db('quotations').insert({'quotation': this.quotation, 'userid':this.userid, 'date': this.date})
+        const newquo = await db('quotations').insert({'text': this.quotation, 'user_id':this.userid})
         return newquo
     }
 
