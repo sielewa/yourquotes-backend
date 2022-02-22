@@ -1,7 +1,7 @@
-const db = require('../config/db');
+const db = require('../config/db')
 
 class Quote {
-    constructor(quotation,userid,date){
+    constructor(quotation, userid, date){
         this.quotation = quotation
         this.userid = userid
         this.date = date
@@ -9,7 +9,7 @@ class Quote {
 
     async saveToDatabase(){
         const newquo = await db('quotations').insert({'quotation': this.quotation, 'userid':this.userid, 'date': this.date})
-        return newquo;
+        return newquo
     }
 
     static async findByDateDesc(){

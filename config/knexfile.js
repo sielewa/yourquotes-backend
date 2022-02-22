@@ -1,20 +1,23 @@
-require('dotenv').config()
+const config = require('./config')
+
+const path = require('path')
 
 module.exports = {
     development: {
-        client: "mysql2",
+        client: 'mysql2',
         connection: {
-            host:process.env.DB_HOST,
-            user:process.env.DB_USER,
-            database:process.env.DB_NAME,
-            password:process.env.DB_PASSWORD,
+            host: config.db_hostname,
+            user: config.db_user,
+            password: config.db_password,
+            database: config.db_name,
         },
         migrations: {
             tableName: 'migrations',
-            directory: './src/database/migrations',
+            directory: path.join(__dirname, '/migrations'),
         },
         seeds: {
-            directory: './src/database/seeds',
+            tableName: 'seeds',
+            directory: path.join(__dirname, '/seeds'),
         },
     },
 }
