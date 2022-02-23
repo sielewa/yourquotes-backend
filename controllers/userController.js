@@ -1,16 +1,13 @@
-const config = require('../config/config')
-
 const User = require('../models/User')
 const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
 
 exports.register = async (req, res, next) => {
-    try {
+    try{
         const { username, password, email } = req.body
         const isExists = await User.isExist(username, email)
-        if (isExists){
+        if(isExists){
             res.json({success: false, message: 'User with this usernamer or email already exists'})
-        }else{
+        } else{
             const salt = await bcrypt.genSalt()
             const hashedPassword = await bcrypt.hash(password, salt)
             let user = new User(username, salt, hashedPassword, email)
@@ -21,7 +18,7 @@ exports.register = async (req, res, next) => {
                 res.json({success: false, message: err})
             }
         }
-    } catch(e) {
+    } catch(e){
         console.log(e)
         res.status(500).json({
             success: false,
