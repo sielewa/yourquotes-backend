@@ -6,13 +6,10 @@ exports.getByPagination = async (req, res, next) => {
         const { page, limit } = req.query
         const offset = (page - 1) * limit
         const results = await Quote.getByPagination(offset, limit)
-        res.json({success: true, results: results})
+        res.status(200).json({quotations: results})
     } catch(e){
         console.log(e);
-        res.status(500).json({
-            success: false,
-            message: 'Something went really wrong',
-        })
+        res.status(500).json({message: 'Something went wrong from backend'})
     }
 };
 
@@ -22,12 +19,9 @@ exports.addQuote = async (req, res, next) => {
         let user = await User.getByUsername(req.user)
         let quote = new Quote(text, user['id'])
         quote = await quote.saveToDatabase()
-        res.json({success: true, message: 'The Quote has been added'})
-    } catch(e) {
+        res.status(201).json({message: 'The Quote has been added'})  
+    } catch(e){
         console.log(e);
-        res.status(500).json({
-            success: false,
-            message: 'Something went really wrong',
-        })
+        res.status(500).json({message: 'Something went wrong from backend'})
     }
 };

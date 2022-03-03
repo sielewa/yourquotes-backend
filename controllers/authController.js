@@ -13,28 +13,25 @@ exports.signIn = async (req, res, next) => {
             let hashedPassword = await bcrypt.hash(password, salt)
             if (hashedPassword === user['password']){
                 const accessToken = jwt.sign(username, config.access_token_secret)
-                res.json({success: true, accessToken: accessToken})
+                res.status(200).json({accessToken: accessToken})
             }else{
-                res.json({success: false, message: 'Wrong password'})
+                res.status(401).json({message: 'Wrong password'})
             }
         }else{
-            res.json({success: false, message: 'User doesnt exists'})
+            res.status(401).json({message: 'User doesnt exists'})
         }
     } catch(e){
         console.log(e)
-        res.status(500).json({
-            success: false,
-            message: 'Something went really wrong',
-        })
+        res.status(500).json({message: 'Something went wrong from backend'})
     }
 }
 
 exports.authToken = (req, res, next) => {
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1]
-    if (token == null) return res.json({success:false, message: 'A token is required for authentication'})
+    if (token == null) return res.status(400).json({message: 'A token is required for authentication'})
     const decoded = jwt.verify(token, config.access_token_secret, (err, user) => {
-        if (err) return res.json({success:false, message: 'Invalid token'})
+        if (err) return res.status(401).json({message: 'Invalid token'})
         req.user = user
         next()
     })

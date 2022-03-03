@@ -14,13 +14,13 @@ class User {
     }
 
     static async isExist(username, email){
-        const results = await db.select().from('users').where('username', username).orWhere('email', email)
+        const results = await db.select().from('users').where('username', username).orWhere('email', email).limit(1)
         return results.length > 0
     }
 
     static async getByUsername(username){
-        const results = await db.select().from('users').where('username', username).limit(1)
-        return results[0] || null
+        const result = await db.select().from('users').where('username', username).limit(1)
+        return result[0] || null
     }
 
     static getSalt(username){
