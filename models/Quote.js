@@ -12,7 +12,7 @@ class Quote {
     }
 
     static async getByPagination(offset, limit){
-        const results = await db('quotations').select().orderBy('created_at', 'desc').offset(offset).limit(limit)
+        const results = await db('quotations').select('quotations.id', 'quotations.text', 'quotations.created_at', 'users.username').join('users', 'users.id', '=', 'quotations.user_id').orderBy('created_at', 'desc').offset(offset).limit(limit)
         return results || null
     }
 
@@ -24,6 +24,11 @@ class Quote {
     static async getByUserId(userid){
         const results = await db('quotations').select().where('userid', userid).limit(1)
         return results || null
+    }
+
+    static async delById(quoteId){
+        const result = await db('quotations').del().where('id', quoteId)
+        return result
     }
 
     static getUserId(){

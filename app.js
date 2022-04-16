@@ -9,7 +9,6 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 app.use(cookieParser())
-
 app.use('/api/users', require('./routes/usersRoutes'))
 app.use('/api/auth', require('./routes/authRoutes'))
 app.use('/api/quotations', require('./routes/quotationsRoutes'))

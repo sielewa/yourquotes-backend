@@ -13,19 +13,18 @@ exports.login = async (req, res, next) => {
             let hashedPassword = await bcrypt.hash(password, salt)
             if (hashedPassword === user['password']){
 
-                // poprzez sha256 = id_usera + secret do refresha = sha256 => zapisywane w redisie
-                // masz metode refreshToken na backendzie ktora odswieza token - ona jest wywolywana w momencie kiedy access jest niewazny albo go nie ma wcale, jestli jest wazny to metoda refreshToken jest wywolywana a w przypadku kiedy nie ma accesa ta metoda sprawdza czy refresh_token z ciastek znajduje sie w redisie, jesli nie to wywala 401, jesli tak to zwraca ci userId 
-
                 const { accessToken, refreshToken } = await User.generateTokenPairs(username)
                 redisRefreshToken.set(refreshToken, username)
 
                 res.cookie('access_token', accessToken, {
-                    expires: new Date(Date.now() + 60)
+                    expires: new Date(Date.now() + 300000),
+                    path: '/'
                 })
 
                 res.cookie('refresh_token', refreshToken, {
                     httpOnly: true,
-                    expires: new Date(Date.now() + 604800000)
+                    expires: new Date(Date.now() + 604800000),
+                    path: '/'
                 })
 
                 return res.status(200).json({accessToken: accessToken, refreshToken: refreshToken})
@@ -77,13 +76,22 @@ exports.refreshToken = async (req, res, next) => {
     return res.status(200).json({accessToken: accessToken, refreshToken: refreshToken})
 }
 
+exports.deleteRefreshToken = async (req, res, next) => {
+    try {
+        const refreshTokenCookie = req.cookies['refresh_token']
+        redisRefreshToken.del(refreshTokenCookie)
+        return res.status(200).json({message: 'Token is delete'});
+    } catch (error) {
+        console.dir(error);
+    }
+}
+
 exports.authToken = async (req, res, next) => {
-    const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(' ')[1]
+    const token = req.cookies['access_token']
     if (token == null) return res.status(400).json({message: 'A token is required for authentication'})
     const decoded = jwt.verify(token, config.access_token_secret, (err, user) => {
         if (err) return res.status(401).json({message: 'Invalid token'})
-        req.user = user
+        req.user = user.username
         next()
     })
 }
@@ -95,7 +103,6 @@ exports.authMe = async (req, res, next) => {
     }
     const username = await User.getByRefreshToken(refreshTokenCookie)
     if(!username){
-        console.dir(refreshTokenCookie)
         return res.status(401).json({message: 'Unauthorized'})
     }
     return res.status(200).json({username: username})
