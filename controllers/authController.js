@@ -1,5 +1,5 @@
 const config = require('../config/config');
-const redisRefreshToken = require('../redis/redis');
+const refreshTokenService = require('../services/refreshTokenService');
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -13,8 +13,8 @@ exports.login = async (req, res, next) => {
 			let hashedPassword = await bcrypt.hash(password, salt);
 			if (hashedPassword === user['password']) {
 
-				const { accessToken, refreshToken } = await User.generateTokenPairs(username);
-				redisRefreshToken.set(refreshToken, username);
+				const { accessToken, refreshToken } = await User.generateTokenPairs(user.id);
+				await refreshTokenService.set(refreshToken, user.id, 604800000);
 
 				res.cookie('access_token', accessToken, {
 					expires: new Date(Date.now() + 300000),
@@ -42,7 +42,7 @@ exports.login = async (req, res, next) => {
 
 exports.logout = async (req, res, next) => {
 	const refreshToken = await req.cookies['refresh_token'];
-	await redisRefreshToken.del(refreshToken);
+	await refreshTokenService.del(refreshToken);
 	res.clearCookie('access_token');
 	res.clearCookie('refresh_token');
 	return res.status(200).json({ message: "User is log out" });
@@ -55,15 +55,16 @@ exports.refreshToken = async (req, res, next) => {
 		return res.status(400).json({ message: 'A token is required' });
 	}
 
-	const username = await User.getByRefreshToken(refreshTokenCookie);
+	const user = await User.getByRefreshToken(refreshTokenCookie);
 
-	if (!username) {
+	if (!user) {
 		return res.status(401).json({ message: 'Unauthorized' });
 	}
 
-	const { accessToken, refreshToken } = await User.generateTokenPairs(username);
-	redisRefreshToken.del(refreshTokenCookie);
-	redisRefreshToken.set(refreshToken, username);
+	const { accessToken, refreshToken } = await User.generateTokenPairs(user.id);
+
+	await refreshTokenService.del(refreshTokenCookie);
+	await refreshTokenService.set(refreshToken, user.id, 604800000);
 
 	res.cookie('access_token', accessToken, {
 		expires: new Date(Date.now() + 300000)
@@ -79,7 +80,7 @@ exports.refreshToken = async (req, res, next) => {
 exports.deleteRefreshToken = async (req, res, next) => {
 	try {
 		const refreshTokenCookie = req.cookies['refresh_token'];
-		redisRefreshToken.del(refreshTokenCookie);
+		refreshTokenService.del(refreshTokenCookie);
 		return res.status(200).json({ message: 'Token is delete' });
 	} catch (error) {
 		console.dir(error);
@@ -91,7 +92,7 @@ exports.authToken = async (req, res, next) => {
 	if (token == null) return res.status(400).json({ message: 'A token is required for authentication' });
 	const decoded = jwt.verify(token, config.access_token_secret, (err, user) => {
 		if (err) return res.status(401).json({ message: 'Invalid token' });
-		req.user = user.username;
+		req.user = user;
 		next();
 	})
 }
@@ -101,11 +102,11 @@ exports.authMe = async (req, res, next) => {
 	if (!refreshTokenCookie) {
 		return res.status(400).json({ message: 'A token is required' });
 	}
-	const username = await User.getByRefreshToken(refreshTokenCookie);
-	if (!username) {
+	const user = await User.getByRefreshToken(refreshTokenCookie);
+	if (!user) {
 		return res.status(401).json({ message: 'Unauthorized' });
 	}
-	return res.status(200).json({ username: username });
+	return res.status(200).json({ user: user });
 }
 
 exports.auth = async (req, res, next) => {

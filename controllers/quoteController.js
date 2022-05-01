@@ -39,8 +39,8 @@ exports.getQuotes = async (req, res, next) => {
 exports.addQuote = async (req, res, next) => {
 	try {
 		const { text } = req.body;
-		let user = await User.getByUsername(req.user);
-		let quote = new Quote(text, user['id']);
+		const user = req.user
+		let quote = new Quote(text, user.user_id);
 		quote = await quote.saveToDatabase();
 		res.status(201).json({ message: 'The Quote has been added' });
 	} catch (err) {

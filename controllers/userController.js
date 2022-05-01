@@ -7,7 +7,7 @@ exports.register = async (req, res, next) => {
 		const { username, password, email } = req.body;
 		const isExists = await User.isExist(username, email);
 		if (isExists) {
-			res.status(400).json({ message: 'User with this usernamer or email already exists' });
+			res.status(401).json({ message: 'User with this usernamer or email already exists' });
 		} else {
 			const salt = await bcrypt.genSalt();
 			const hashedPassword = await bcrypt.hash(password, salt);
@@ -26,10 +26,7 @@ exports.getUser = async (req, res, next) => {
 		const username = req.params.username;
 		const user = await User.getByUsername(username);
 		const quotes = await Quote.getByUserId(user.id);
-		let count = 0;
-		for (key in quotes) {
-			count++;
-		}
+		let count = quotes.length;
 		const userResponse = {
 			username: username,
 			quotes_count: count,

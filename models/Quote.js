@@ -12,7 +12,7 @@ class Quote {
 	}
 
 	static async getByPagination(offset, limit) {
-		const results = await db('quotations').select('quotations.id', 'quotations.text', 'quotations.created_at', 'users.username').join('users', 'users.id', '=', 'quotations.user_id').orderBy('created_at', 'desc').offset(offset).limit(limit);
+		const results = await db('quotations').select('quotations.id', 'quotations.text', 'quotations.created_at', 'quotations.user_id', 'users.username').join('users', 'users.id', '=', 'quotations.user_id').orderBy('created_at', 'desc').offset(offset).limit(limit);
 		return results || null;
 	}
 
@@ -22,17 +22,17 @@ class Quote {
 	}
 
 	static async getQuotes() {
-		const results = await db('quotations').select('quotations.id', 'quotations.text', 'quotations.created_at', 'users.username').join('users', 'users.id', '=', 'quotations.user_id').orderBy('created_at', 'desc');
+		const results = await db('quotations').select('quotations.id', 'quotations.text', 'quotations.created_at', 'quotations.user_id', 'users.username').join('users', 'users.id', '=', 'quotations.user_id').orderBy('created_at', 'desc');
 		return results || null;
 	}
 
 	static async getById(quoid) {
-		const results = await db('quotations').select().where('id', quoid).limit(1);
+		const results = await db('quotations').select().where('id', quoid).first();
 		return results || null;
 	}
 
 	static async getByUserId(userid) {
-		const results = await db('quotations').select('quotations.id', 'quotations.text', 'quotations.created_at', 'users.username').join('users', 'users.id', '=', 'quotations.user_id').where('user_id', userid).orderBy('created_at', 'desc');
+		const results = await db('quotations').select('quotations.id', 'quotations.text', 'quotations.created_at', 'quotations.user_id', 'users.username').join('users', 'users.id', '=', 'quotations.user_id').where('user_id', userid).orderBy('created_at', 'desc');
 		return results || null;
 	}
 
