@@ -12,7 +12,7 @@ exports.getByPagination = async (req, res, next) => {
 		const prevPage = intPage - 1;
 		//if (prevPage === 0) { prevPage = null }
 		const count = await Quote.getCountOfQuotes();
-		const totalPages = Math.round(count.count / intLimit);
+		const totalPages = Math.floor(count.count / intLimit);
 		const pagination = {
 			nextPage: nextPage,
 			prevPage: prevPage,
@@ -38,8 +38,9 @@ exports.getQuotes = async (req, res, next) => {
 
 exports.addQuote = async (req, res, next) => {
 	try {
-		const { text } = req.body;
-		const user = req.user
+		let { text } = req.body;
+		const user = req.user;
+		text = text.split('"').join('')
 		let quote = new Quote(text, user.user_id);
 		quote = await quote.saveToDatabase();
 		res.status(201).json({ message: 'The Quote has been added' });

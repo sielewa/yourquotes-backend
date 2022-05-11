@@ -20,6 +20,6 @@ app.use((err, req, res, next) => {
 	res.status(500).json({ message: 'Something went wrong from backend' });
 });
 
-app.listen(config.port, config.host, () => {
-	console.log(`quotations-app start on HOST: ${config.host} and PORT: ${config.port}`);
+app.listen(config.app.port, config.app.host, () => {
+	console.log(`quotations-app start on HOST: ${config.app.host} and PORT: ${config.app.port}`);
 });

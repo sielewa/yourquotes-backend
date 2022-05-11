@@ -33,8 +33,8 @@ class User {
 	}
 
 	static async generateTokenPairs(user_id) {
-		const accessToken = jwt.sign({ user_id: user_id }, config.access_token_secret, { expiresIn: '5m' });
-		const refreshToken = sha256(user_id + config.refresh_token_secret + Date.now());
+		const accessToken = jwt.sign({ user_id: user_id }, config.jwt.access_token_secret, { expiresIn: '5m' });
+		const refreshToken = sha256(user_id + config.jwt.refresh_token_secret + Date.now());
 		return { accessToken: accessToken, refreshToken: refreshToken };
 	}
 

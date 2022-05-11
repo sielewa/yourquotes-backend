@@ -6,10 +6,10 @@ module.exports = {
 	development: {
 		client: 'mysql2',
 		connection: {
-			host: config.db_hostname,
-			user: config.db_user,
-			password: config.db_password,
-			database: config.db_name,
+			host: config.db.host,
+			user: config.db.user,
+			password: config.db.password,
+			database: config.db.name,
 		},
 		migrations: {
 			tableName: 'migrations',

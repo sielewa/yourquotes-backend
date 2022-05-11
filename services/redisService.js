@@ -6,9 +6,9 @@ class redisService {
 
 	constructor() {
 		this.redisService = redis.createClient({
-			host: config.redis_host,
-			post: config.redis_port,
-			db: config.redis_db
+			host: config.redis.host,
+			post: config.redis.port,
+			db: config.redis.db
 		});
 		this.redisService.connect();
 	}

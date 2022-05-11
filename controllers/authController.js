@@ -90,7 +90,7 @@ exports.deleteRefreshToken = async (req, res, next) => {
 exports.authToken = async (req, res, next) => {
 	const token = req.cookies['access_token'];
 	if (token == null) return res.status(400).json({ message: 'A token is required for authentication' });
-	const decoded = jwt.verify(token, config.access_token_secret, (err, user) => {
+	const decoded = jwt.verify(token, config.jwt.access_token_secret, (err, user) => {
 		if (err) return res.status(401).json({ message: 'Invalid token' });
 		req.user = user;
 		next();
