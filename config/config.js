@@ -1,8 +1,6 @@
 require('dotenv').config();
 
-const env = process.env.NODE_ENV;
-
-const development = {
+const config = {
 	app: {
 		port: process.env.PORT || 5000,
 		host: process.env.HOST || '127.0.0.1',
@@ -24,30 +22,4 @@ const development = {
 	}
 }
 
-const production = {
-	app: {
-		port: process.env.PORT || 5000,
-		host: process.env.HOST || '0.0.0.0',
-	},
-	db: {
-		host: process.env.HOSTNAME_DB,
-		user: process.env.USERNAME_DB,
-		password: process.env.PASSWORD_DB,
-		name: process.env.NAME_DB,
-	},
-	jwt: {
-		access_token_secret: process.env.ACCESS_TOKEN_SECRET,
-		refresh_token_secret: process.env.REFRESH_TOKEN_SECRET,
-	},
-	redis: {
-		url: process.env.REDIS_URL
-	}
-}
-
-const config = {
-	development,
-	production
-}
-
-
-module.exports = config[env];
+module.exports = config;
